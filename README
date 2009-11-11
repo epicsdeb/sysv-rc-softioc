@@ -1,6 +1,106 @@
-The Debian Package sysv-rc-softioc
-----------------------------
 
-Contains a sysv style initialization script for a softioc using procServ
+Contains a Debian SysV style initialization script for a softioc using procServ.
 
- -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 10 Nov 2009 20:50:42 -0500
+= Usage =
+
+This script install the following files
+
+/etc/init.d/softioc
+/etc/default/epics-softioc
+/usr/share/doc/sysv-rc-softioc/config.example
+
+== Initial Setup ==
+
+1) Choose a location for softIoc instance data (st.cmd, db, ...).
+
+This will be a single directory which will contain a subdirectory for each softIoc instance.  A good choice would be '/epics/iocs'.
+
+Edit '/etc/default/epics-softioc' to use this path.
+
+$ cat /etc/default/epics-softioc
+SOFTBASE=/epics/iocs
+$
+
+2) Create a Unix group softIocs
+
+Each softIoc will run as a seperate user.  This provides a nice division and allows Channel Access security to distinguish all the instances on a given machine.  It is recommended that all softIoc users be in the same group.
+
+# groupadd softioc
+
+3) Create the directory for softIoc instances
+
+# mkdir /epics
+# chgrp softioc /epics
+# chmod g+s /epics
+# mkdir /epics/iocs
+# chmod g+ws /epics/iocs
+
+4) (optional) Install Conserver
+
+Conserver is a process which connects to the telnet servers provided by all the softIocs on a host.  It then allows (secure) remote access and continous logging.
+
+# apt-get install conserver-server
+
+Edit /etc/conserver/conserver.cf to include the following line.
+
+default procserv {type host; host localhost; }
+
+See the conserver documentation for information on access control.
+
+== Per-Instance Setup ==
+
+1) Choose a name
+
+Try to pick something more creative than example1 ;)
+
+2) Create a user
+
+# useradd -c 'softioc' -d /epics/iocs/example1 -g softioc -N example1
+# mkdir /epics/iocs/example1
+
+3) Configure the instance
+
+Each instance must have a name and a port number (for procServ).  It is also a good idea to include the server's hostname to prevent accidentally running it on the wrong server.
+
+# cat << EOF > /epics/iocs/example1/config
+NAME = example1
+
+PORT = 4051
+
+HOST = myserver
+EOF
+
+If given, the hostname is required to match the result of running 'hostname -s' or 'hostname -f'.
+
+4) Add the softioc to the boot sequence
+
+# ln -s softioc /etc/init.d/softioc-example1
+# update-rc.d softioc-example1 defaults
+
+5) To remove from the boot sequence
+
+# update-rc.d softioc-example1 remove
+
+6) (optional) Configure Conserver
+
+Add the following to /etc/conserver/conserver.cf
+
+console example1 {
+	include procserv;
+	master myserver;
+	port 4051;
+}
+
+7) Starting the instance
+
+# /etc/init.d/softioc-example1 start
+
+8) (optional) View console
+
+$ console example1
+
+9) (alternative) Direct telnet
+
+$ telnet localhost 4051
+
+

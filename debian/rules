@@ -18,18 +18,7 @@ export DH_OPTIONS
 
 
 #Architecture
-build: build-arch build-indep
-
-build-arch: build-arch-stamp
-build-arch-stamp:
-
-	# Add here commands to compile the arch part of the package.
-	#$(MAKE)
-	touch $@
-
-basedir=$(CURDIR)/debian/sysv-rc-softioc
-confdir=$(basedir)/etc
-docdir=$(basedir)/usr/share/doc/sysv-rc-softioc
+build: build-indep
 
 build-indep: build-indep-stamp
 build-indep-stamp:
@@ -40,14 +29,18 @@ build-indep-stamp:
 clean: 
 	dh_testdir
 	dh_testroot
-	rm -f build-arch-stamp build-indep-stamp
+	rm -f build-indep-stamp
 
 	# Add here commands to clean up after the build process.
 	#$(MAKE) clean
 
 	dh_clean 
 
-install: install-indep install-arch
+basedir=$(CURDIR)/debian/sysv-rc-softioc
+confdir=$(basedir)/etc
+docdir=$(basedir)/usr/share/doc/sysv-rc-softioc
+
+install: install-indep
 install-indep:
 	dh_testdir
 	dh_testroot
@@ -55,24 +48,17 @@ install-indep:
 	dh_installdirs -i
 
 	install -d $(confdir)/init.d
-	install -m 644 softioc $(confdir)/init.d/softioc
+	install -m 644 softioc $(confdir)/init.d
+
+	install -d $(confdir)/default
+	install -m 644 epics-softioc $(confdir)/default
 
 	install -d $(docdir)
-	install -m 644 README $(docdir)/README
+	install -m 644 README $(docdir)
+	install -m 644 config.example $(docdir)
 
 	dh_install -i
 
-install-arch:
-	#dh_testdir
-	#dh_testroot
-	#dh_clean -k -s 
-	#dh_installdirs -s
-
-	# Add here commands to install the arch part of the package into
-	# debian/tmp.
-	#$(MAKE) DESTDIR=$(CURDIR)/debian/sysv-rc-softioc install
-
-	#dh_install -s
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-indep
 # in another 'make' thread.
@@ -108,9 +94,7 @@ binary-common:
 binary-indep: build-indep install-indep
 	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
 
-# Build architecture dependant packages using the common target.
-binary-arch: build-arch install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS=-s binary-common
+binary-arch:
 
 binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure
+.PHONY: build clean binary-indep binary-arch binary install install-indep

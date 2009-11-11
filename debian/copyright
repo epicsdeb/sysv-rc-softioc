@@ -1,22 +1,17 @@
 This package was debianized by Michael Davidsaver <mdavidsaver@bnl.gov> on
 Tue, 10 Nov 2009 20:50:42 -0500.
 
-It was downloaded from <url://example.com>
+It was downloaded from http://pubweb.bnl.gov/users/mdavidsaver/www
 
 Upstream Author(s):
 
-    <put author's name and email here>
-    <likewise for another author>
+    Michael Davidsaver <mdavidsaver@bnl.gov>
 
 Copyright:
 
-    <Copyright (C) YYYY Name OfAuthor>
-    <likewise for another author>
+    Copyright (C) 2009 Brookhaven National Lab
 
 License:
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted under the terms of the BSD License.
 
     THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -30,13 +25,5 @@ License:
     OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
     SUCH DAMAGE.
 
-On Debian systems, the complete text of the BSD License can be
-found in `/usr/share/common-licenses/BSD'.
-
-
 The Debian packaging is (C) 2009, Michael Davidsaver <mdavidsaver@bnl.gov> and
 is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
-
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.

@@ -1,0 +1,26 @@
+# softIoc name and port must be unique on the
+# server where it runs.  It is recommended that
+# the name be globally unique.
+#
+# The port is the one used by procServ for its
+# telnet server.
+#
+NAME = myioc
+PORT = 4050
+
+# Use name to run the IOC
+# This must be created manually for each
+# softioc instance
+#
+# Defaults to $NAME
+#
+#USER = myioc
+
+# Name of the server on which this softIoc
+# will run.  This is used for error checking
+# to prevent the instance from being run on
+# the wrong server.
+#
+# If not set then the check is disabled
+#
+#HOST = myserver.domain.com

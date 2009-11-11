@@ -1,0 +1,3 @@
+
+# base directory for IOC instance data (st.cmd, db, ...)
+SOFTBASE=/epics/iocs

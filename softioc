@@ -22,7 +22,7 @@
 # Expects /etc/default/epics-softioc to exist and contain (at minimum)
 # a line like:
 #
-#   SOFTBASE=/epics/instances
+#   SOFTBASE=/epics/iocs
 #
 # It then sources: $SOFTBASE/config/global  (optional)
 # And: $SOFTBASE/$NAME/config  (required)
@@ -83,8 +83,6 @@ NAME=invalid
 PORT=invalid
 # USER to run procServ (if not set defaults to $IOC)
 unset USER
-# Only used when creating the user.  Any additional groups.
-unset GROUPS
 # Computer that this softioc runs on.  Used to prevent copy+paste
 # errors and duplicate PV names.  (optional)
 unset HOST
@@ -105,7 +103,7 @@ USER=${USER:-${IOC}}
 [ "$PORT" = "invalid" ] && die "Configuration does not set port"
 
 if [ -n "$HOST" ]; then
-  if [ "$HOST" != "$(hostname)" -a "$HOST" != "$(hostname -f)" ]; then
+  if [ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" ]; then
     die "This softioc instance runs on '$HOST' not this host '$(hostname -f)'"
   fi
 fi
@@ -122,7 +120,6 @@ check_status() {
 }
 
 # Verify that user $1 exists on this system
-# Create if necessary
 check_user() {
   id "$USER" &>/dev/null || die "Account User: $USER or group softioc is\
  missing on this system"
