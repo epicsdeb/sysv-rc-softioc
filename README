@@ -1,0 +1,6 @@
+The Debian Package sysv-rc-softioc
+----------------------------
+
+Contains a sysv style initialization script for a softioc using procServ
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 10 Nov 2009 20:50:42 -0500

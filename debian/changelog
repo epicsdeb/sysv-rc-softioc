@@ -1,0 +1,5 @@
+sysv-rc-softioc (1.0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 10 Nov 2009 20:50:42 -0500
