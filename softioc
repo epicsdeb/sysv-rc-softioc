@@ -1,0 +1,194 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          softioc
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs $network
+# Should-Start:      $local_fs
+# Should-Stop:       $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: An EPICS Soft IOC
+# Description:       Control a single software IOC
+### END INIT INFO
+
+#
+# Debian init script for EPICS soft iocs
+#
+# The IOC name is determined from the script name.
+#
+# i.e.  ln -s softioc /etc/init.d/softioc-MYIOCNAME
+#
+# Expects /etc/default/epics-softioc to exist and contain (at minimum)
+# a line like:
+#
+#   SOFTBASE=/epics/instances
+#
+# It then sources: $SOFTBASE/config/global  (optional)
+# And: $SOFTBASE/$NAME/config  (required)
+#
+# When started procServ is used to cd to $SOFTBASE/$NAME and run ./st.cmd
+#
+# The environment of the IOC is determined by the config scripts
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+CONF=/etc/default/softioc
+
+if [ ! -f $CONF ]; then
+        echo "$CONF does not exist! - Aborting..."
+        exit 0
+fi
+
+. /lib/lsb/init-functions
+
+die () {
+	log_failure_msg "$1"
+	exit 1
+}
+
+PROCSERV=/usr/bin/procServ
+
+NAME=$(basename $0)
+IOC=${NAME#softioc-}
+
+. $CONF
+
+#
+# The script is in /etc/init.d/softioc
+#  For ioc NAME:
+#    ln -s softioc /etc/init.d/softioc-NAME
+#
+if [ "$NAME" = "softioc" ]; then
+	echo "$0 is meant to be a symlink with a name like 'softioc-NAME'"
+	echo "where 'NAME' is the name of a softioc instance"
+	echo "example: ln -s softioc /etc/init.d/softioc-myioc"
+	exit 0
+fi
+
+[ -z "$SOFTBASE" ] && die "SOFTBASE not set in $CONF"
+[ -d "$SOFTBASE" ] || die "SOFTBASE ($SOFTBASE) is not a directory"
+
+GLOBCONF="$SOFTBASE/config/global"
+INSTBASE="$SOFTBASE/$IOC"
+INSTCONF="$INSTBASE/config"
+INSTRUN="$INSTBASE/st.cmd"
+
+[ -f "$INSTCONF" ] || die "Missing instance config: $INSTCONF"
+
+# NAME is the ioc instance name to be used for consistance checking
+NAME=invalid
+# PORT to be used by procServ
+PORT=invalid
+# USER to run procServ (if not set defaults to $IOC)
+unset USER
+# Only used when creating the user.  Any additional groups.
+unset GROUPS
+# Computer that this softioc runs on.  Used to prevent copy+paste
+# errors and duplicate PV names.  (optional)
+unset HOST
+
+if [ -f "$GLOBCONF" ]; then
+  . $GLOBCONF
+fi
+
+. $INSTCONF
+
+# default user name is softioc instance name
+USER=${USER:-${IOC}}
+
+[ "$NAME" = "invalid" ] && die "Configuration does not set IOC name"
+[ "$NAME" = "$IOC" ] || die "Configuration name ($NAME) does not match IOC instance ($IOC)"
+
+# The port to use for procServ
+[ "$PORT" = "invalid" ] && die "Configuration does not set port"
+
+if [ -n "$HOST" ]; then
+  if [ "$HOST" != "$(hostname)" -a "$HOST" != "$(hostname -f)" ]; then
+    die "This softioc instance runs on '$HOST' not this host '$(hostname -f)'"
+  fi
+fi
+
+PID=/var/run/softioc-$IOC.pid
+
+check_status() {
+  if [ "$1" = "-q" ];then
+    status_of_proc -p "$PID" "procServ" "$IOC" &>/dev/null
+  else
+    status_of_proc -p "$PID" "procServ" "$IOC"
+  fi
+  return $?
+}
+
+# Verify that user $1 exists on this system
+# Create if necessary
+check_user() {
+  id "$USER" &>/dev/null || die "Account User: $USER or group softioc is\
+ missing on this system"
+}
+
+PROCARGS="-q -c $INSTBASE -i ^D^C^] -p $PID -n $IOC --restrict"
+
+case "$1" in
+
+start)
+	check_user
+	log_daemon_msg "Starting softioc" "$IOC ($NAME) "
+
+	# Needed so that the pid file can be written by $USER
+	# procServ will put in the correct pid
+	touch $PID || die "Failed to create pid file"
+	chown "$USER" $PID || die "Failed to chmod pid file"
+
+	start-stop-daemon --start --pidfile $PID \
+	--chdir "$INSTBASE" --startas $PROCSERV --name procServ \
+	--chuid "$USER" \
+	-- $PROCARGS $PORT ./st.cmd
+
+	sleep 2
+
+	if check_status -q; then
+		log_end_msg 0
+	else
+		log_failure_msg
+		log_end_msg 1
+		exit 1
+	fi
+
+		
+	;;
+stop)
+	log_daemon_msg "Stopping softioc" "$IOC ($NAME) "
+
+	start-stop-daemon --stop --quiet --pidfile $PID \
+	--user "$USER" --name procServ \
+	--retry=TERM/30/KILL/5
+
+	log_end_msg $?
+
+	rm -f "$PID"
+	;;
+status)
+	echo -n "Status of softioc $IOC ($NAME) : "
+	check_status
+	exit $?
+	;;
+restart)
+	$0 stop
+	[ $? -ne 0 ] && exit 0
+	sleep 2
+	$0 start
+	exit $?
+	;;
+info)
+	echo "IOC: $IOC"
+	echo "USER: $USER"
+	echo "BASE: $INSTBASE"
+	;;
+*)
+	die "Usage: $0 {start|stop|restart|status|info}"
+	;;
+esac
+
+exit 0
