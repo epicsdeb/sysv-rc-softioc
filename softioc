@@ -34,7 +34,7 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-CONF=/etc/default/softioc
+CONF=/etc/default/epics-softioc
 
 if [ ! -f $CONF ]; then
         echo "$CONF does not exist! - Aborting..."
