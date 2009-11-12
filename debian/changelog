@@ -1,3 +1,9 @@
+sysv-rc-softioc (1.1) unstable; urgency=low
+
+  * Fix incorrect file name in init script
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Thu, 12 Nov 2009 17:11:53 -0500
+
 sysv-rc-softioc (1.0) unstable; urgency=low
 
   * Initial Release.
