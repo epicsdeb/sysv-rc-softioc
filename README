@@ -75,11 +75,11 @@ If given, the hostname is required to match the result of running 'hostname -s' 
 4) Add the softioc to the boot sequence
 
 # ln -s softioc /etc/init.d/softioc-example1
-# update-rc.d softioc-example1 defaults
+# update-rc.d softioc-example1 defaults 99
 
 5) To remove from the boot sequence
 
-# update-rc.d softioc-example1 remove
+# update-rc.d -f softioc-example1 remove
 
 6) (optional) Configure Conserver
 
