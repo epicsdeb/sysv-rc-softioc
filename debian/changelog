@@ -1,3 +1,11 @@
+sysv-rc-softioc (1.2) unstable; urgency=low
+
+  * Fix assumption about script naming which was causing the softioc
+    script to fail during boot and shutdown.
+  * rename /etc/default/softioc to /etc/default/epics-softioc
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Fri, 15 Jan 2010 17:45:13 -0500
+
 sysv-rc-softioc (1.1) unstable; urgency=low
 
   * Fix incorrect file name in init script
