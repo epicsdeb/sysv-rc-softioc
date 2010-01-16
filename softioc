@@ -49,7 +49,8 @@ die () {
 PROCSERV=/usr/bin/procServ
 
 NAME=$(basename $0)
-IOC=${NAME#softioc-}
+#IOC=${NAME#softioc-}
+IOC=$(echo "$NAME"|cut -f '2-' -d '-')
 
 . $CONF
 
