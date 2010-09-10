@@ -21,11 +21,16 @@
 # a line like:
 #
 #   SOFTBASE=/epics/iocs
+# or
+#   SOFTBASE=/epics/iocs:/home/epics/iocs
 #
-# It then sources: $SOFTBASE/config/global  (optional)
-# And: $SOFTBASE/$NAME/config  (required)
+# First /etc and then these directories are search for $prefix/MYIOCNAME/config
 #
-# When started procServ is used to cd to $SOFTBASE/$NAME and run ./st.cmd
+# It sources all files matching $prefix/config/global until it finds
+# $prefix/MYIOCNAME/config at which point it sources this file and then
+# starts procServ.
+#
+# When started procServ is used to cd to $prefix/MYIOCNAME and runs ./st.cmd
 #
 # The environment of the IOC is determined by the config scripts
 #
@@ -34,12 +39,11 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 CONF=/etc/default/epics-softioc
 
-if [ ! -f $CONF ]; then
-        echo "$CONF does not exist! - Aborting..."
-        exit 0
-fi
-
 . /lib/lsb/init-functions
+
+warn () {
+	log_warning_msg "$1"
+}
 
 die () {
 	log_failure_msg "$1"
@@ -52,7 +56,12 @@ NAME=$(basename $0)
 #IOC=${NAME#softioc-}
 IOC=$(echo "$NAME"|cut -f '2-' -d '-')
 
-. $CONF
+if [ -r "$CONF" ]
+then
+  . $CONF
+  [ -z "$SOFTBASE" ] && warn "SOFTBASE not set in $CONF"
+  [ -d "$SOFTBASE" ] || warn "SOFTBASE ($SOFTBASE) is not a directory"
+fi
 
 #
 # The script is in /etc/init.d/softioc
@@ -60,22 +69,21 @@ IOC=$(echo "$NAME"|cut -f '2-' -d '-')
 #    ln -s softioc /etc/init.d/softioc-NAME
 #
 if [ "$NAME" = "softioc" ]; then
-	echo "$0 is meant to be a symlink with a name like 'softioc-NAME'"
-	echo "where 'NAME' is the name of a softioc instance"
-	echo "example: ln -s softioc /etc/init.d/softioc-myioc"
-	exit 0
+  echo "$0 is meant to be a symlink with a name like 'softioc-NAME'"
+  echo "where 'NAME' is the name of a softioc instance"
+  echo "example: ln -s softioc /etc/init.d/softioc-myioc"
+  exit 0
 fi
 
-[ -z "$SOFTBASE" ] && die "SOFTBASE not set in $CONF"
-[ -d "$SOFTBASE" ] || die "SOFTBASE ($SOFTBASE) is not a directory"
+IOCPATH=/etc/iocs
+if [ -n "$SOFTBASE" ]
+then
+  # Search in system locations first then user locations
+  IOCPATH="$IOCPATH:$SOFTBASE"
+fi
 
-GLOBCONF="$SOFTBASE/config/global"
-INSTBASE="$SOFTBASE/$IOC"
-INSTCONF="$INSTBASE/config"
-INSTRUN="$INSTBASE/st.cmd"
-
-[ -f "$INSTCONF" ] || die "Missing instance config: $INSTCONF"
-
+# Modify environment before including global config
+#
 # NAME is the ioc instance name to be used for consistance checking
 NAME=invalid
 # PORT to be used by procServ
@@ -86,14 +94,46 @@ unset USER
 # errors and duplicate PV names.  (optional)
 unset HOST
 
-if [ -f "$GLOBCONF" ]; then
-  . $GLOBCONF
-fi
+save_IFS="$IFS"
+IFS=":"
+
+INSTBASE=
+for ent in $IOCPATH
+do
+  IFS="$save_IFS"
+
+  [ -z "$ent" ] && continue
+
+  if [ -r "$ent/config/global" ]
+  then
+    pushd "$ent/config" >/dev/null
+    . "global"
+    popd >/dev/null
+  fi
+
+  [ -r "$ent/$IOC/config" ] || continue
+
+  INSTBASE="$ent/$IOC"
+
+  break
+done
+
+[ -z "$INSTBASE" ] && die "Failed to find IOC $IOC in $IOCPATH"
+
+INSTCONF="$INSTBASE/config"
+
+cd "$INSTBASE" || die "Failed to cd to $INSTBASE"
 
 . $INSTCONF
 
+# provide defaults for things not set by any config
+
 # default user name is softioc instance name
-USER=${USER:-${IOC}}
+USER="${USER:-${IOC}}"
+
+EXEC="${EXEC:-${INSTBASE}/st.cmd}"
+
+# consistency checking
 
 [ "$NAME" = "invalid" ] && die "Configuration does not set IOC name"
 [ "$NAME" = "$IOC" ] || die "Configuration name ($NAME) does not match IOC instance ($IOC)"
@@ -140,7 +180,7 @@ start)
 	start-stop-daemon --start --pidfile $PID \
 	--chdir "$INSTBASE" --startas $PROCSERV --name procServ \
 	--chuid "$USER" \
-	-- $PROCARGS $PORT ./st.cmd
+	-- $PROCARGS $PORT $EXEC
 
 	sleep 2
 
@@ -181,6 +221,7 @@ info)
 	echo "IOC: $IOC"
 	echo "USER: $USER"
 	echo "BASE: $INSTBASE"
+	echo "EXEC: $EXEC"
 	;;
 *)
 	die "Usage: $0 {start|stop|restart|status|info}"
