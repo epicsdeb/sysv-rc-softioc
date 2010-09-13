@@ -23,7 +23,7 @@ $
 
 2) Create a Unix group softIocs
 
-Each softIoc will run as a seperate user.  This provides a nice division and allows Channel Access security to distinguish all the instances on a given machine.  It is recommended that all softIoc users be in the same group.
+Each softIoc can run as a seperate user.  This provides a nice division and allows Channel Access security to distinguish all the instances on a given machine.  It is recommended that all softIoc users be in the same group.
 
 # groupadd softioc
 
@@ -103,4 +103,16 @@ $ console example1
 
 $ telnet localhost 4051
 
+== report-iocs ==
+
+This package include the script 'report-iocs' which has several sub-commands
+to help in managing several softiocs.
+
+$ ./report-iocs help
+Usage: report-iocs [-v] [-x] cmd
+Available commands:
+  help         - display this message
+  report [ioc] - Show config of all/an IOC
+  status       - Check if IOCs are running
+  nextport     - Find the next unused procServ port
 
