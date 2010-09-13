@@ -37,25 +37,19 @@ clean:
 	dh_clean 
 
 basedir=$(CURDIR)/debian/sysv-rc-softioc
-confdir=$(basedir)/etc
-docdir=$(basedir)/usr/share/doc/sysv-rc-softioc
 
 install: install-indep
-install-indep:
+install-indep: build-indep
 	dh_testdir
 	dh_testroot
 	dh_clean -k -i 
 	dh_installdirs -i
 
-	install -d $(confdir)/init.d
-	install -m 644 softioc $(confdir)/init.d
+	install -m 644 softioc $(basedir)/etc/init.d
 
-	install -d $(confdir)/default
-	install -m 644 epics-softioc $(confdir)/default
+	install -m 644 epics-softioc $(basedir)/etc/default
 
-	install -d $(docdir)
-	install -m 644 README $(docdir)
-	install -m 644 config.example $(docdir)
+	install -m 755 report-iocs $(basedir)/usr/bin
 
 	dh_install -i
 
