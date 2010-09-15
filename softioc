@@ -93,6 +93,8 @@ unset USER
 # Computer that this softioc runs on.  Used to prevent copy+paste
 # errors and duplicate PV names.  (optional)
 unset HOST
+# By default write logfile.  Set to 0 or '' to disable.
+LOG=1
 
 save_IFS="$IFS"
 IFS=":"
@@ -148,6 +150,7 @@ if [ -n "$HOST" ]; then
 fi
 
 PID=/var/run/softioc-$IOC.pid
+LOGFILE=/var/log/softioc-${IOC}.log
 
 check_status() {
   if [ "$1" = "-q" ];then
@@ -166,6 +169,10 @@ check_user() {
 
 PROCARGS="-q -c $INSTBASE -i ^D^C^] -p $PID -n $IOC --restrict"
 
+if [ -n "$LOG" -a "$LOG" != 0 ]; then
+	PROCARGS="$PROCARGS --logfile=$LOGFILE"
+fi
+
 case "$1" in
 
 start)
@@ -176,6 +183,12 @@ start)
 	# procServ will put in the correct pid
 	touch $PID || die "Failed to create pid file"
 	chown "$USER" $PID || die "Failed to chmod pid file"
+
+	# same for log file
+	if [ -n "$LOG" -a "$LOG" != 0 ]; then
+		touch $LOGFILE || die "Failed to create log file"
+		chown "$USER" $LOGFILE || die "Failed to chmod log file"
+	fi
 
 	start-stop-daemon --start --pidfile $PID \
 	--chdir "$INSTBASE" --startas $PROCSERV --name procServ \
