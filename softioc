@@ -60,7 +60,6 @@ if [ -r "$CONF" ]
 then
   . $CONF
   [ -z "$SOFTBASE" ] && warn "SOFTBASE not set in $CONF"
-  [ -d "$SOFTBASE" ] || warn "SOFTBASE ($SOFTBASE) is not a directory"
 fi
 
 #
@@ -126,7 +125,7 @@ INSTCONF="$INSTBASE/config"
 
 cd "$INSTBASE" || die "Failed to cd to $INSTBASE"
 
-. $INSTCONF
+. "$INSTCONF"
 
 # provide defaults for things not set by any config
 
