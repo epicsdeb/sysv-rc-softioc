@@ -67,16 +67,16 @@ installioc() {
 	echo "Installing IOC $BASE/$IOC"
 	SCRIPT="$INITDDIR/softioc-$IOC"
 	echo "As $SCRIPT"
-	if [ -f "$SCRIPT" ] && ! grep 'AUTOMATICALLYGENERATED' "$SCRIPT" &>/dev/null
-	then
-		# script is a file and isn't automatically managed
-		mv --backup=numbered "$SCRIPT" "$SCRIPT".old || die "failed to backup existing script"
-		echo "Backing up existing script"
-	elif [ -h "$SCRIPT" ]
+	if [ -h "$SCRIPT" ]
 	then
 		# old-style symlink
 		echo "Replacing existing symlink to `readlink "$SCRIPT"`"
 		rm -f "$SCRIPT" || die "Failed to remove symlink"
+	elif [ -f "$SCRIPT" ] && ! grep 'AUTOMATICALLYGENERATED' "$SCRIPT" &>/dev/null
+	then
+		# script is a file and isn't automatically managed
+		mv --backup=numbered "$SCRIPT" "$SCRIPT".old || die "failed to backup existing script"
+		echo "Backing up existing script"
 	fi
 	cat << EOF > "$SCRIPT"
 ## Notice
