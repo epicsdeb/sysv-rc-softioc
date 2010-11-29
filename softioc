@@ -92,6 +92,7 @@ unset USER
 # Computer that this softioc runs on.  Used to prevent copy+paste
 # errors and duplicate PV names.  (optional)
 unset HOST
+unset CHDIR
 # By default write logfile.  Set to 0 or '' to disable.
 LOG=1
 
@@ -122,6 +123,7 @@ done
 [ -z "$INSTBASE" ] && die "Failed to find IOC $IOC in $IOCPATH"
 
 INSTCONF="$INSTBASE/config"
+CHDIR="$INSTBASE"
 
 cd "$INSTBASE" || die "Failed to cd to $INSTBASE"
 
@@ -132,7 +134,7 @@ cd "$INSTBASE" || die "Failed to cd to $INSTBASE"
 # default user name is softioc instance name
 USER="${USER:-${IOC}}"
 
-EXEC="${EXEC:-${INSTBASE}/st.cmd}"
+EXEC="${EXEC:-${CHDIR}/st.cmd}"
 
 # consistency checking
 
@@ -166,7 +168,7 @@ check_user() {
  missing on this system"
 }
 
-PROCARGS="-q -c $INSTBASE -i ^D^C^] -p $PID -n $IOC --restrict"
+PROCARGS="-q -c $CHDIR -i ^D^C^] -p $PID -n $IOC --restrict"
 
 if [ -n "$LOG" -a "$LOG" != 0 ]; then
 	PROCARGS="$PROCARGS --logfile=$LOGFILE"
@@ -190,7 +192,7 @@ start)
 	fi
 
 	start-stop-daemon --start --pidfile $PID \
-	--chdir "$INSTBASE" --startas $PROCSERV --name procServ \
+	--chdir "$CHDIR" --startas $PROCSERV --name procServ \
 	--chuid "$USER" \
 	-- $PROCARGS $PORT $EXEC
 
@@ -232,7 +234,8 @@ restart)
 info)
 	echo "IOC: $IOC"
 	echo "USER: $USER"
-	echo "BASE: $INSTBASE"
+	echo "PORT: $PORT"
+	echo "BASE: $CHDIR"
 	echo "EXEC: $EXEC"
 	;;
 *)

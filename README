@@ -21,6 +21,8 @@ $ cat /etc/default/epics-softioc
 SOFTBASE=/epics/iocs
 $
 
+Note: Since version 1.3 SOFTBASE can be a ':' seperated list of paths.
+
 2) Create a Unix group softIocs
 
 Each softIoc can run as a seperate user.  This provides a nice division and allows Channel Access security to distinguish all the instances on a given machine.  It is recommended that all softIoc users be in the same group.
@@ -46,6 +48,8 @@ Edit /etc/conserver/conserver.cf to include the following line.
 default procserv {type host; host localhost; }
 
 See the conserver documentation for information on access control.
+
+Note: Conserver uses the tcpd for authentication.
 
 == Per-Instance Setup ==
 
