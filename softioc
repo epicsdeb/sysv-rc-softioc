@@ -1,15 +1,5 @@
 #!/bin/sh
 
-### BEGIN INIT INFO
-# Provides:          softioc
-# Required-Start:    $remote_fs $local_fs $network $syslog $time
-# Required-Stop:     $remote_fs $local_fs $network $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: An EPICS Soft IOC
-# Description:       Control a single software IOC
-### END INIT INFO
-
 #
 # Debian init script for EPICS soft iocs
 #
@@ -37,8 +27,6 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-CONF=/etc/default/epics-softioc
-
 . /lib/lsb/init-functions
 
 warn () {
@@ -50,17 +38,18 @@ die () {
 	exit 1
 }
 
+LIBRARY=/usr/share/sysv-rc-softioc/library.sh
+
+[ -f "$LIBRARY" ] || die "Missing $LIBRARY"
+. "$LIBRARY"
+
+iocinit
+
 PROCSERV=/usr/bin/procServ
 
 NAME=$(basename $0)
 #IOC=${NAME#softioc-}
 IOC=$(echo "$NAME"|cut -f '2-' -d '-')
-
-if [ -r "$CONF" ]
-then
-  . $CONF
-  [ -z "$SOFTBASE" ] && warn "SOFTBASE not set in $CONF"
-fi
 
 #
 # The script is in /etc/init.d/softioc
@@ -74,12 +63,10 @@ if [ "$NAME" = "softioc" ]; then
   exit 0
 fi
 
-IOCPATH=/etc/iocs
-if [ -n "$SOFTBASE" ]
-then
-  # Search in system locations first then user locations
-  IOCPATH="$IOCPATH:$SOFTBASE"
-fi
+IOCBASE="`findbase "$IOC"`"
+[ $? -ne 0 -o -z "$IOCBASE" ] && die "Failed to find ioc $IOC in $IOCPATH"
+GLOBALBASE="$IOCBASE/config"
+INSTBASE="$IOCBASE/$IOC"
 
 # Modify environment before including global config
 #
@@ -96,34 +83,15 @@ unset CHDIR
 # By default write logfile.  Set to 0 or '' to disable.
 LOG=1
 
-save_IFS="$IFS"
-IFS=":"
-
-INSTBASE=
-for ent in $IOCPATH
-do
-  IFS="$save_IFS"
-
-  [ -z "$ent" ] && continue
-
-  if [ -r "$ent/config/global" ]
-  then
-    pushd "$ent/config" >/dev/null
-    . "global"
-    popd >/dev/null
-  fi
-
-  [ -r "$ent/$IOC/config" ] || continue
-
-  INSTBASE="$ent/$IOC"
-
-  break
-done
-
-[ -z "$INSTBASE" ] && die "Failed to find IOC $IOC in $IOCPATH"
 
 INSTCONF="$INSTBASE/config"
 CHDIR="$INSTBASE"
+
+if [ -f "$GLOBALBASE/config" ]
+then
+	cd "$GLOBALBASE"
+	. "$GLOBALBASE/config"
+fi
 
 cd "$INSTBASE" || die "Failed to cd to $INSTBASE"
 
@@ -155,7 +123,7 @@ LOGFILE=/var/log/softioc-${IOC}.log
 
 check_status() {
   if [ "$1" = "-q" ];then
-    status_of_proc -p "$PID" "procServ" "$IOC" &>/dev/null
+    status_of_proc -p "$PID" "procServ" "$IOC" 2>&1 >/dev/null
   else
     status_of_proc -p "$PID" "procServ" "$IOC"
   fi
@@ -164,7 +132,7 @@ check_status() {
 
 # Verify that user $1 exists on this system
 check_user() {
-  id "$USER" &>/dev/null || die "Account User: $USER or group softioc is\
+  id "$USER" 2>&1 >/dev/null || die "Account User: $USER or group softioc is\
  missing on this system"
 }
 
@@ -178,7 +146,7 @@ case "$1" in
 
 start)
 	check_user
-	log_daemon_msg "Starting softioc" "$IOC ($NAME) "
+	log_daemon_msg "Starting softioc" "$IOC "
 
 	# Needed so that the pid file can be written by $USER
 	# procServ will put in the correct pid
@@ -209,7 +177,7 @@ start)
 		
 	;;
 stop)
-	log_daemon_msg "Stopping softioc" "$IOC ($NAME) "
+	log_daemon_msg "Stopping softioc" "$IOC "
 
 	start-stop-daemon --stop --quiet --pidfile $PID \
 	--user "$USER" --name procServ \
@@ -220,7 +188,7 @@ stop)
 	rm -f "$PID"
 	;;
 status)
-	echo -n "Status of softioc $IOC ($NAME) : "
+	echo -n "Status of softioc $IOC : "
 	check_status
 	exit $?
 	;;

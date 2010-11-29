@@ -24,9 +24,9 @@ usage() {
 	echo "  report [ioc]  - Show config of all/an IOC"
 	echo "  status        - Check if IOCs are running"
 	echo "  nextport      - Find the next unused procServ port"
-	echo "  install [ioc] - Create /etc/init.d/softioc-[ioc]"
-	echo "  enable [ioc]  - Register IOC to start during system boot"
-	echo "  disable [ioc] - Un-register IOC"
+	echo "  install <ioc> - Create /etc/init.d/softioc-[ioc]"
+	echo "  enable <ioc>  - Register IOC to start during system boot"
+	echo "  disable <ioc> - Un-register IOC"
 	exit 2
 }
 
@@ -37,7 +37,7 @@ usage() {
 # $1 - iocdir
 reportone() {
 	if [ -z "$HEADER" ]; then
-		echo -e "BASE\t\tIOC\t\tUSER\t\tPORT\tHOST\tCMD"
+		printf "%-15s| %-15s| %-15s|%5s | %s\n" BASE IOC USER PORT EXEC
 		export HEADER=1
 	fi
 	local IOC="`basename $1`"
@@ -47,11 +47,17 @@ reportone() {
 		return 1
 	fi
 	unset EXEC USER HOST
+	PORT=0
 	local INSTBASE="$1"
 	. "$1/config"
+	USER="${USER:-${IOC}}"
 	EXEC="${EXEC:-${INSTBASE}/st.cmd}"
-	[ -z "$HOST" ] && HOST="anywhere"
-	echo -e "$BASE\t$IOC\t\t$USER\t\t$PORT\t$HOST\t$EXEC"
+	if [ -n "$HOST" ]; then
+		[ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" ] && continue
+	else
+		HOST="<anywhere>"
+	fi
+	printf "%-15s| %-15s| %-15s|%5s | %s\n" $BASE $IOC $USER $PORT $EXEC
 }
 
 installioc() {
@@ -93,9 +99,10 @@ installioc() {
 . "$INITBASESCRIPT"
 EOF
 	[ -f "$SCRIPT" -a -s "$SCRIPT" ] || die "Failed to create $SCRIPT"
+	chmod +x "$SCRIPT"
 	echo "Complete"
 	echo "To add the IOC to the system boot order run:"
-	echo "$0 enable $IOC"
+	echo " `basename $0` enable $IOC"
 }
 
 VERB=
@@ -149,8 +156,8 @@ status)
 
 nextport)
 	# Find the highest port in use and add one.
-	LAST="`visit reportone "$1" | tail -n '+2' | awk '{print $4}' | sort -n | tail -n1`"
-	if [ -n "$LAST" ]
+	LAST="`visit reportone "$1" | tail -n '+2' | awk '{print $7}' | sort -n | tail -n1`"
+	if [ -n "$LAST" ] && [ "$LAST" -ne 0 ]
 	then
 		# print next port
 		expr "$LAST" '+' 1
@@ -165,12 +172,14 @@ install)
 	;;
 
 enable)
+	requireroot
 	[ -z "$1" ] && die "Missing argument"
 	echo "Enable: softioc-$1"
 	update-rc.d "softioc-$1" defaults 99
 	;;
 
 disable)
+	requireroot
 	[ -z "$1" ] && die "Missing argument"
 	echo "Disable: softioc-$1"
 	update-rc.d -f "softioc-$1" remove

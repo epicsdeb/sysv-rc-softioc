@@ -45,6 +45,7 @@ install-indep: build-indep
 	dh_clean -k -i 
 	dh_installdirs -i
 
+	install -m 644 library.sh $(basedir)/usr/share/sysv-rc-softioc
 	install -m 644 softioc $(basedir)/usr/share/sysv-rc-softioc
 
 	install -m 644 epics-softioc $(basedir)/etc/default

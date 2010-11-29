@@ -2,7 +2,6 @@
 CONF="${CONF:-/etc/default/epics-softioc}"
 
 requireroot() {
-	return 0
 	[ "`id -u`" -eq 0 ] || die "This action requires root access"
 }
 
@@ -32,7 +31,7 @@ visit() {
 	for ent in $IOCPATH
 	do
 		IFS="$save_IFS"
-		[ -z "$ent" ] && continue
+		[ -z "$ent" -o ! -d "$ent" ] && continue
 
 		for iocconf in "$ent"/*/config
 		do
@@ -60,7 +59,7 @@ findbase() {
 	for ent in $IOCPATH
 	do
 		IFS="$save_IFS"
-		[ -z "$ent" ] && continue
+		[ -z "$ent" -o ! -d "$ent" ] && continue
 
 		if [ -f "$ent/$IOC/config" ]; then
 			printf "$ent"
