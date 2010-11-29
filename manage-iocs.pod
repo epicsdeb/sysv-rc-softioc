@@ -1,0 +1,110 @@
+
+=pod
+
+=head1 NAME
+
+manage-iocs - Utility to report/manipulate EPICS soft IOCS
+
+=head1 SYNOPSIS
+
+manage-iocs [-v] [-x] <cmd> [arguments...]
+
+=head1 DESCRIPTION
+
+This script performs a variety of tasks related to
+administration of systems hosting several EPICS softIocs.
+It is integrated with the softioc init script also provided.
+manage-iocs has a number of commands which can be grouped into two
+catagories: reporting and admin.
+
+=head2 Reporting
+
+=over
+
+=item B<help>
+
+Print usage message
+
+=item B<report> [iocname]
+
+Print a table of information with one line for each configured
+softioc.  Includes username, procServ port, user to run as, and
+command to execute.
+
+=item B<status>
+
+List all installed IOCs.  Indicates if the associated procServ
+is running, and whether it is registered to automatically start
+on reboot.
+
+=item B<nextport>
+
+Helper when creating a new IOC instance.  Tries to find a port
+for procServ which isn't used.  Finds the highest port number
+in use and adds one.
+
+=back
+
+=head2 Admin
+
+=over
+
+=item B<install> iocname
+
+Creates/updates the init script associated with an IOC in
+/etc/init.d/.
+
+=item B<enable> iocname
+
+Register an IOC instance so that it will be started automatically
+when the system reboots.
+
+=item B<disable> iocname
+
+Unregister an IOC so that it will not start with the system reboots.
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item B<-h>
+
+Print usage message.
+
+=item B<-v>
+
+More verbose output
+
+=item B<-x>
+
+Turn on shell echoing.  Very verbose.
+
+=back
+
+=head1 FILES
+
+=over
+
+=item F</etc/default/epics-softioc>
+
+Global configuration.  This must include a definition of B<$SOFTBASE>
+which is a ':' seperated list of IOC base directories.  For example:
+SOFTBASE=/epics/iocs
+
+=item F</epics/iocs/config/global>
+
+Configuration for all IOCS in that base directory.
+
+=item F</epics/iocs/[IOC]/config>
+
+Configuration for a single IOC instance.
+
+=back
+
+=head1 AUTHOR
+
+Michael Davidsaver <mdavidsaver@bnl.gov>
+
+=cut

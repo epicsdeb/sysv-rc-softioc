@@ -5,9 +5,26 @@ Contains a Debian SysV style initialization script for a softioc using procServ.
 
 This script install the following files
 
-/etc/init.d/softioc
+/usr/bin/manage-iocs
 /etc/default/epics-softioc
 /usr/share/doc/sysv-rc-softioc/config.example
+
+== manage-iocs ==
+
+The script 'manage-iocs' has several sub-commands
+to help in managing softiocs.  See its manpage for
+details.
+
+$ manage-iocs help
+Usage: manage-iocs [-v] [-x] cmd
+Available commands:
+  help          - display this message
+  report [ioc]  - Show config of all/an IOC
+  status        - Check if IOCs are running
+  nextport      - Find the next unused procServ port
+  install <ioc> - Create /etc/init.d/softioc-[ioc]
+  enable <ioc>  - Register IOC to start during system boot
+  disable <ioc> - Un-register IOC
 
 == Initial Setup ==
 
@@ -15,7 +32,7 @@ This script install the following files
 
 This will be a single directory which will contain a subdirectory for each softIoc instance.  A good choice would be '/epics/iocs'.
 
-Edit '/etc/default/epics-softioc' to use this path.
+Set this path in '/etc/default/epics-softioc'.
 
 $ cat /etc/default/epics-softioc
 SOFTBASE=/epics/iocs
@@ -74,16 +91,23 @@ PORT = 4051
 HOST = myserver
 EOF
 
+Note: The manage-iocs script has a subcommand 'nextport' which tries to pick an unused port number from procServ.
+
 If given, the hostname is required to match the result of running 'hostname -s' or 'hostname -f'.
+
+See /usr/share/doc/sysv-rc-softioc-#/config.example for allowed items in a IOC config file.
+
+# manage-iocs install example1
+
+This creates/replaces the script /etc/init.d/softioc-example1
 
 4) Add the softioc to the boot sequence
 
-# ln -s softioc /etc/init.d/softioc-example1
-# update-rc.d softioc-example1 defaults 99
+# manage-iocs enable example1
 
 5) To remove from the boot sequence
 
-# update-rc.d -f softioc-example1 remove
+# manage-iocs disable example1
 
 6) (optional) Configure Conserver
 
@@ -95,7 +119,7 @@ console example1 {
 	port 4051;
 }
 
-7) Starting the instance
+7) Manually starting the instance
 
 # /etc/init.d/softioc-example1 start
 
@@ -106,17 +130,4 @@ $ console example1
 9) (alternative) Direct telnet
 
 $ telnet localhost 4051
-
-== report-iocs ==
-
-This package include the script 'report-iocs' which has several sub-commands
-to help in managing several softiocs.
-
-$ ./report-iocs help
-Usage: report-iocs [-v] [-x] cmd
-Available commands:
-  help         - display this message
-  report [ioc] - Show config of all/an IOC
-  status       - Check if IOCs are running
-  nextport     - Find the next unused procServ port
 
