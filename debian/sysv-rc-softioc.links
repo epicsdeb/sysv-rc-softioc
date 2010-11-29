@@ -1,1 +1,2 @@
 usr/share/sysv-rc-softioc/softioc etc/init.d/softioc
+usr/bin/manage-iocs usr/bin/report-iocs
