@@ -84,11 +84,11 @@ Try to pick something more creative than example1 ;)
 Each instance must have a name and a port number (for procServ).  It is also a good idea to include the server's hostname to prevent accidentally running it on the wrong server.
 
 # cat << EOF > /epics/iocs/example1/config
-NAME = example1
+NAME=example1
 
-PORT = 4051
+PORT=4051
 
-HOST = myserver
+HOST=myserver
 EOF
 
 Note: The manage-iocs script has a subcommand 'nextport' which tries to pick an unused port number from procServ.

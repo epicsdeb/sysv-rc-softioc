@@ -5,8 +5,8 @@
 # The port is the one used by procServ for its
 # telnet server.
 #
-NAME = myioc
-PORT = 4050
+NAME=myioc
+PORT=4050
 
 # User name to run the IOC
 # This must be created manually for each
@@ -14,7 +14,7 @@ PORT = 4050
 #
 # Defaults to $NAME
 #
-#USER = myioc
+#USER=myioc
 
 # Name of the server on which this softIoc
 # will run.  This is used for error checking
@@ -23,14 +23,14 @@ PORT = 4050
 #
 # If not set then the check is disabled
 #
-#HOST = myserver.domain.com
+#HOST=myserver.domain.com
 
 # IOC executable name.  This is the command
 # given to procServ to start the IOC.
 #
 # Defaults to $CHDIR/st.cmd
 #
-#EXEC = "$CHDIR/st.cmd"
+#EXEC="$CHDIR/st.cmd"
 
 # IOC run directory.  The directory in which
 # procServ will start the IOC.  It is permissable
@@ -40,4 +40,4 @@ PORT = 4050
 # Defaults to '/youriocbasedir/$NAME'
 #   (the directory containing this file)
 #
-#CHDIR = "$CHDIR"
+#CHDIR="$CHDIR"
