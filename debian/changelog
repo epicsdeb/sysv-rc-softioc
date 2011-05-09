@@ -1,3 +1,11 @@
+sysv-rc-softioc (1.5) unstable; urgency=low
+
+  * Teach manage-iocs report to output conserver config
+  * Add wrapper script update-iocs-cf
+  * Correct shell syntax in README
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Mon, 09 May 2011 09:30:49 -0400
+
 sysv-rc-softioc (1.4) unstable; urgency=low
 
   * remove warning when SOFTBASE does not point to a single directory
