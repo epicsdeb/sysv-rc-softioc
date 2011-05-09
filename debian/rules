@@ -51,6 +51,7 @@ install-indep: build-indep
 	install -m 644 epics-softioc $(basedir)/etc/default
 
 	install -m 755 manage-iocs $(basedir)/usr/bin
+	install -m 755 update-iocs-cf $(basedir)/usr/sbin
 
 	dh_install -i
 

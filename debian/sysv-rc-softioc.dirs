@@ -1,4 +1,5 @@
 etc/init.d
 etc/default
 usr/bin
+usr/sbin
 usr/share/sysv-rc-softioc

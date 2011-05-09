@@ -25,6 +25,10 @@ iocinit() {
 # $2 - IOC name (empty for all IOCs)
 visit() {
 	[ -z "$1" ] && die "visitall: missing argument"
+	vcmd="$1"
+	vname="$2"
+	shift
+	shift
 
 	save_IFS="$IFS"
 	IFS=':'
@@ -39,8 +43,8 @@ visit() {
 			name="`basename "$ioc"`"
 			[ "$name" = '*' ] && continue
 
-			if [ -z "$2" -o "$name" = "$2" ]; then
-				$1 $ioc
+			if [ -z "$vname" ] || [ "$name" = "$vname" ]; then
+				$vcmd $ioc "$@"
 			fi
 		done
 	done

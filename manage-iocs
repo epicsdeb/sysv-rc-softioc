@@ -37,7 +37,13 @@ usage() {
 # $1 - iocdir
 reportone() {
 	if [ -z "$HEADER" ]; then
-		printf "%-15s| %-15s| %-15s|%5s | %s\n" BASE IOC USER PORT EXEC
+		case "$2" in
+		conserver) # no header
+			;;
+		*)
+			printf "%-15s| %-15s| %-15s|%5s | %s\n" BASE IOC USER PORT EXEC
+			;;
+		esac
 		export HEADER=1
 	fi
 	local IOC="`basename $1`"
@@ -52,12 +58,24 @@ reportone() {
 	. "$1/config"
 	USER="${USER:-${IOC}}"
 	EXEC="${EXEC:-${INSTBASE}/st.cmd}"
-	if [ -n "$HOST" ]; then
-		[ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" ] && continue
-	else
-		HOST="<anywhere>"
-	fi
-	printf "%-15s| %-15s| %-15s|%5s | %s\n" $BASE $IOC $USER $PORT $EXEC
+	case "$2" in
+	conserver)
+		# skip IOC which don't specify a host
+		[ -n "$HOST" ] || continue
+		# identify if this is the host system
+		[ "$HOST" = "$(hostname -s)" -o "$HOST" = "$(hostname -f)" ] && HOST=localhost
+		echo "console $IOC {include softioc; master $HOST; port $PORT;}"
+		;;
+	all)
+		[ -n "$HOST" ] || HOST="<anywhere>"
+		printf "%-15s| %-15s| %-15s| %-15s|%5s | %s\n" $BASE $HOST $IOC $USER $PORT $EXEC
+		;;
+	*)
+		[ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" -a -n "$HOST" ] && continue
+		[ -n "$HOST" ] || HOST="<anywhere>"
+		printf "%-15s| %-15s| %-15s|%5s | %s\n" $BASE $IOC $USER $PORT $EXEC
+		;;
+	esac
 }
 
 installioc() {
@@ -128,7 +146,7 @@ shift
 
 case "$cmd" in
 report)
-	visit reportone "$1"
+	visit reportone "$@"
 	;;
 
 list)
@@ -189,6 +207,7 @@ help)
 	usage
 	;;
 *)
-	die "Unknown command $cmd"
+	die "Unknown command '$cmd'"
+	usage
 	;;
 esac

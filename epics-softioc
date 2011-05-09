@@ -1,3 +1,6 @@
 
 # base directory for IOC instance data (st.cmd, db, ...)
 SOFTBASE=/epics/iocs
+
+# location for generated conserver config
+#IOCSCF=/etc/conserver/iocs.cf

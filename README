@@ -62,7 +62,8 @@ Conserver is a process which connects to the telnet servers provided by all the 
 
 Edit /etc/conserver/conserver.cf to include the following line.
 
-default procserv {type host; host localhost; }
+default softioc { type host; host localhost;}
+#include /etc/conserver/iocs.cf
 
 See the conserver documentation for information on access control.
 
@@ -111,13 +112,9 @@ This creates/replaces the script /etc/init.d/softioc-example1
 
 6) (optional) Configure Conserver
 
-Add the following to /etc/conserver/conserver.cf
+After creating /epics/iocs/example1/config run:
 
-console example1 {
-	include procserv;
-	master myserver;
-	port 4051;
-}
+# update-iocs-cf
 
 7) Manually starting the instance
 
