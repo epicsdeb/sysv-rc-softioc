@@ -23,7 +23,8 @@ build: build-indep
 build-indep: build-indep-stamp
 build-indep-stamp:
 
-	pod2man --center=' ' --section=1 manage-iocs.pod > manage-iocs.1
+	for ff in manage-iocs update-iocs-cf iocs-auto-start ; do \
+		pod2man --center=' ' --section=1 $$ff.pod > $$ff.1; done
 
 	touch $@
 
@@ -32,7 +33,7 @@ clean:
 	dh_testroot
 	rm -f build-indep-stamp
 
-	rm -f manage-iocs.1
+	rm -f iocs-auto-start.1 manage-iocs.1 update-iocs-cf.1
 
 	dh_clean 
 
@@ -52,6 +53,7 @@ install-indep: build-indep
 
 	install -m 755 manage-iocs $(basedir)/usr/bin
 	install -m 755 update-iocs-cf $(basedir)/usr/sbin
+	install -m 755 iocs-auto-start $(basedir)/usr/sbin
 
 	dh_install -i
 

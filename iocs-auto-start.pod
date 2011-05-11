@@ -1,0 +1,21 @@
+
+=pod
+
+=head1 NAME
+
+iocs-auto-start - Automatically start IOCs for this host
+
+=head1 SYNOPSIS
+
+iocs-auto-start
+
+=head1 DESCRIPTION
+
+This script automatically starts all IOCs which are configured to run on the current host.
+It will install SysV init scripts if necessary.
+
+=head1 AUTHOR
+
+Michael Davidsaver <mdavidsaver@bnl.gov>
+
+=cut

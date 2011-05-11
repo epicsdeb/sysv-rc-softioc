@@ -1,0 +1,43 @@
+
+=pod
+
+=head1 NAME
+
+update-iocs-cf - Auto generate conserver config for IOCS
+
+=head1 SYNOPSIS
+
+update-iocs-cf
+
+=head1 DESCRIPTION
+
+Creates a file (F</etc/conserver/iocs.cf> by default) with information
+about all known IOCs.  This file can be used by placing an entry
+in conserver.cf like:
+
+default softioc { type host; host localhost;}
+#include /etc/conserver/iocs.cf
+
+Running update-iocs-cf will update iocs.cf and cause conserver to
+reload its configuration.
+
+If the directory F</etc/conserver/> does not exist (conserver-server is not
+installed) then no action is taken.
+
+
+=head1 FILES
+
+=over
+
+=item F</etc/default/epics-softioc>
+
+Define B<IOCSCF> in this file to override the default filename.
+
+=back
+
+=head1 AUTHOR
+
+Michael Davidsaver <mdavidsaver@bnl.gov>
+
+=cut
+
