@@ -1,3 +1,10 @@
+sysv-rc-softioc (1.6) unstable; urgency=low
+
+  * add iocs-auto-start
+  * manpages for helper utilities iocs-auto-start and update-iocs-cf
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Wed, 11 May 2011 16:40:11 -0400
+
 sysv-rc-softioc (1.5) unstable; urgency=low
 
   * Teach manage-iocs report to output conserver config
