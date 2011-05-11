@@ -191,7 +191,7 @@ status)
 	check_status
 	exit $?
 	;;
-restart)
+restart|reload|force-reload)
 	$0 stop
 	[ $? -ne 0 ] && exit 0
 	sleep 2
