@@ -20,6 +20,20 @@ iocinit() {
 	fi
 }
 
+# $1 /base/dir/and/iocname
+loadconfig() {
+    IOC="`basename $1`"
+    BASE="`dirname $1`"
+    if [ ! -r "$1/config" ]; then
+        echo "Missing config $1/config" >&2
+        return 1
+    fi
+    unset EXEC USER HOST
+    PORT=0
+    local INSTBASE="$1"
+    . "$1/config"
+}
+
 #   Run command $1 on IOC all instances
 # $1 - A shell command
 # $2 - IOC name (empty for all IOCs)

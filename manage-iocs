@@ -61,7 +61,7 @@ reportone() {
 	case "$2" in
 	conserver)
 		# skip IOC which don't specify a host
-		[ -n "$HOST" ] || continue
+		[ -n "$HOST" -a -n "$PORT" ] || continue
 		# identify if this is the host system
 		[ "$HOST" = "$(hostname -s)" -o "$HOST" = "$(hostname -f)" ] && HOST=localhost
 		echo "console $IOC {include softioc; master $HOST; port $PORT;}"
@@ -71,7 +71,7 @@ reportone() {
 		printf "%-15s| %-15s| %-15s| %-15s|%5s | %s\n" $BASE $HOST $IOC $USER $PORT $EXEC
 		;;
 	*)
-		[ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" -a -n "$HOST" ] && continue
+		[ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" -a -n "$HOST" ] && return 0
 		[ -n "$HOST" ] || HOST="<anywhere>"
 		printf "%-15s| %-15s| %-15s|%5s | %s\n" $BASE $IOC $USER $PORT $EXEC
 		;;

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+CONF=/etc/default/epics-softioc
+
+LIBRARY=/usr/share/sysv-rc-softioc/library.sh
+
+warn () {
+    echo "$1" >&2
+}
+
+die () {
+    echo "$1" >&2
+    exit 1
+}
+
+. "$LIBRARY"
+
+
+startone() {    
+    loadconfig "$1"
+    
+    [ "$HOST" = "$(hostname -s)" -o "$HOST" = "$(hostname -f)" ] || return 0
+    echo "From $BASE Setup $IOC"
+    
+    manage-iocs install "$IOC" || warn "Couldn't install $IOC"
+    
+    invoke-rc.d "softioc-$IOC" start || warn "Couldn't start $IOC"
+}
+
+
+iocinit
+
+visit startone ''
