@@ -3,11 +3,32 @@ Contains a Debian SysV style initialization script for a softioc using procServ.
 
 = Usage =
 
-This script install the following files
+This package uses the following files
 
 /usr/bin/manage-iocs
+/etc/init.d/softioc-*
 /etc/default/epics-softioc
+/epics/iocs/*/config
+
+The following are provided as information.
+
 /usr/share/doc/sysv-rc-softioc/config.example
+/usr/share/doc/sysv-rc-softioc/README (this file)
+
+== IOC runtime environment ==
+
+The following environment variables are automatically set before procServ
+is started.  They may be overridden in the IOC shell.
+
+IOCNAME - The IOC name.
+
+USER - The system user account name which runs the IOC.
+
+HOSTNAME - The short name of the host running the IOC.
+
+TOP - The absolute path of the base IOC directory.  Contains the 'config' file
+
+EPICS_HOST_ARCH - Host target name (eg. linux-x86)
 
 == manage-iocs ==
 

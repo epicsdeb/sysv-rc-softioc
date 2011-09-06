@@ -117,6 +117,14 @@ if [ -n "$HOST" ]; then
   fi
 fi
 
+# The official runtime environment
+export HOSTNAME="$(hostname -s)"
+export IOCNAME="$NAME"
+export TOP="$INSTBASE"
+export EPICS_HOST_ARCH=`/usr/lib/epics/startup/EpicsHostArch`
+export PROCPORT="$PORT"
+# also USER
+
 PID=/var/run/softioc-$IOC.pid
 LOGFILE=/var/log/softioc-${IOC}.log
 

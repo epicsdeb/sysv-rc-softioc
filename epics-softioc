@@ -4,3 +4,7 @@ SOFTBASE=/epics/iocs
 
 # location for generated conserver config
 #IOCSCF=/etc/conserver/iocs.cf
+
+# Extra environment variables to be exported
+# to all IOCs
+#export CF_UPDATE_DIR=
