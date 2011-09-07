@@ -1,3 +1,9 @@
+sysv-rc-softioc (1.7) unstable; urgency=low
+
+  * Export environment variables HOSTNAME and IOCNAME for use in IOC
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 28 Jun 2011 10:55:59 -0400
+
 sysv-rc-softioc (1.6) unstable; urgency=low
 
   * add iocs-auto-start
