@@ -1,3 +1,11 @@
+sysv-rc-softioc (1.8) unstable; urgency=low
+
+  * Fix manage-iocs report output.
+      Correct init script location
+      Add space around port number
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Fri, 24 Feb 2012 09:33:18 -0500
+
 sysv-rc-softioc (1.7) unstable; urgency=low
 
   * Export environment variables HOSTNAME and IOCNAME for use in IOC
