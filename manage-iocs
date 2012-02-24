@@ -41,7 +41,7 @@ reportone() {
 		conserver) # no header
 			;;
 		*)
-			printf "%-15s| %-15s| %-15s|%5s | %s\n" BASE IOC USER PORT EXEC
+			printf "%-15s| %-15s| %-15s| %5s | %s\n" BASE IOC USER PORT EXEC
 			;;
 		esac
 		export HEADER=1
@@ -55,6 +55,7 @@ reportone() {
 	unset EXEC USER HOST
 	PORT=0
 	local INSTBASE="$1"
+	CHDIR="$1"
 	. "$1/config"
 	USER="${USER:-${IOC}}"
 	EXEC="${EXEC:-${INSTBASE}/st.cmd}"
@@ -68,12 +69,12 @@ reportone() {
 		;;
 	all)
 		[ -n "$HOST" ] || HOST="<anywhere>"
-		printf "%-15s| %-15s| %-15s| %-15s|%5s | %s\n" $BASE $HOST $IOC $USER $PORT $EXEC
+		printf "%-15s| %-15s| %-15s| %-15s| %5s | %s\n" $BASE $HOST $IOC $USER $PORT $EXEC
 		;;
 	*)
 		[ "$HOST" != "$(hostname -s)" -a "$HOST" != "$(hostname -f)" -a -n "$HOST" ] && return 0
 		[ -n "$HOST" ] || HOST="<anywhere>"
-		printf "%-15s| %-15s| %-15s|%5s | %s\n" $BASE $IOC $USER $PORT $EXEC
+		printf "%-15s| %-15s| %-15s| %5s | %s\n" $BASE $IOC $USER $PORT $EXEC
 		;;
 	esac
 }
