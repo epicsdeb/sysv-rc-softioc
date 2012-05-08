@@ -1,3 +1,10 @@
+sysv-rc-softioc (1.9) unstable; urgency=low
+
+  * Fix formatting issue in report sub-command
+     Ensure that there is whitespace before the '|'s
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 08 May 2012 14:40:36 -0400
+
 sysv-rc-softioc (1.8) unstable; urgency=low
 
   * Fix manage-iocs report output.
