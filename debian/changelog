@@ -1,3 +1,10 @@
+sysv-rc-softioc (1.10) unstable; urgency=low
+
+  * log to syslog from init script
+     Logs to the 'daemon' facility with levels err, warning, and info.
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 13 Nov 2012 15:47:09 -0500
+
 sysv-rc-softioc (1.9) unstable; urgency=low
 
   * Fix formatting issue in report sub-command
