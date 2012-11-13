@@ -26,13 +26,17 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
+LOGNAME="$(basename "$(readlink -f "$0")")"
+
 . /lib/lsb/init-functions
 
 warn () {
+	logger -p daemon.warning -t "$LOGNAME" "Warning: $1" || true
 	log_warning_msg "$1"
 }
 
 die () {
+	logger -p daemon.err -t "$LOGNAME" "Error: $1" || true
 	log_failure_msg "$1"
 	exit 1
 }
@@ -153,6 +157,7 @@ case "$1" in
 
 start)
 	check_user
+	logger -p daemon.info -t "$LOGNAME" "Starting softioc: $IOC" || true
 	log_daemon_msg "Starting softioc" "$IOC "
 
 	# Needed so that the pid file can be written by $USER
@@ -174,8 +179,10 @@ start)
 	sleep 2
 
 	if check_status -q; then
+		logger -p daemon.info -t "$LOGNAME" "Running" || true
 		log_end_msg 0
 	else
+		logger -p daemon.err -t "$LOGNAME" "Failed to start" || true
 		log_failure_msg
 		log_end_msg 1
 		exit 1
@@ -184,13 +191,16 @@ start)
 		
 	;;
 stop)
+	logger -p daemon.info -t "$LOGNAME" "Stopping softioc: $IOC" || true
 	log_daemon_msg "Stopping softioc" "$IOC "
 
 	start-stop-daemon --stop --quiet --pidfile $PID \
 	--user "$USER" --name procServ \
 	--retry=TERM/30/KILL/5
 
-	log_end_msg $?
+	R=$?
+	logger -p daemon.info -t "$LOGNAME" "Stopping softioc: $IOC ($R)" || true
+	log_end_msg $R
 
 	rm -f "$PID"
 	;;
