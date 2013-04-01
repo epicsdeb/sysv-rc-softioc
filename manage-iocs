@@ -27,6 +27,8 @@ usage() {
 	echo "  install <ioc> - Create /etc/init.d/softioc-[ioc]"
 	echo "  enable <ioc>  - Register IOC to start during system boot"
 	echo "  disable <ioc> - Un-register IOC"
+	echo "  startall      - Start all IOCs installed for this system"
+	echo "  stopall       - Stop all IOCs installed for this system"
 	exit 2
 }
 
@@ -202,6 +204,22 @@ disable)
 	[ -z "$1" ] && die "Missing argument"
 	echo "Disable: softioc-$1"
 	update-rc.d -f "softioc-$1" remove
+	;;
+
+stopall)
+	requireroot
+	for initfile in /etc/init.d/softioc-*
+	do
+		$initfile stop 
+	done
+	;;
+
+startall)
+	requireroot
+	for initfile in /etc/init.d/softioc-*
+	do
+		$initfile start 
+	done
 	;;
 
 help)
