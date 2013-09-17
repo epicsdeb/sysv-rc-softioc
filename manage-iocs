@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH="${PATH}:/usr/sbin"
+
 CONF=/etc/default/epics-softioc
 
 LIBRARY=/usr/share/sysv-rc-softioc/library.sh
