@@ -111,8 +111,8 @@ installioc() {
 
 ### BEGIN INIT INFO
 # Provides:          softioc-$IOC
-# Required-Start:    \$remote_fs \$local_fs \$network \$syslog \$time
-# Required-Stop:     \$remote_fs \$local_fs \$network \$syslog
+# Required-Start:    \$remote_fs \$local_fs \$network \$syslog \$time +autofs
+# Required-Stop:     \$remote_fs \$local_fs \$network \$syslog +autofs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: An EPICS Soft IOC
