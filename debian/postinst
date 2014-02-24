@@ -44,6 +44,8 @@ case "$1" in
 			mv "/etc/init.d/${bn}.dpkg-backup" "$ff"
 		fi
 	done
+	# Regenerate .depend.*
+	insserv || true
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
