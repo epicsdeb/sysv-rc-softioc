@@ -230,7 +230,8 @@ help)
 	usage
 	;;
 *)
-	die "Unknown command '$cmd'"
+	[ "$cmd" ] && warn "Unknown command '$cmd'"
 	usage
+	exit 1
 	;;
 esac
