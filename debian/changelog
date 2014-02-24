@@ -1,3 +1,11 @@
+sysv-rc-softioc (1.13) unstable; urgency=low
+
+  * Update init deps to perfer start before common network auth services
+      slapd ypbind nscd nslcd
+  * Regenerate unmodified /etc/init.d/softioc-* in post install
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Mon, 24 Feb 2014 17:22:21 -0500
+
 sysv-rc-softioc (1.12) unstable; urgency=low
 
   * Add /usr/sbin to PATH
