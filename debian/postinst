@@ -26,6 +26,24 @@ case "$1" in
 		mv -f /etc/default/epics-softioc /etc/default/epics-softioc.example
 		mv /etc/default/softioc /etc/default/epics-softioc
 	fi
+
+	# re-generate stub init.d files
+	for ff in /etc/init.d/softioc-*
+	do
+		bn="$(basename "$ff")"
+		# Don't touch locally modified files
+		grep -q -e AUTOMATICALLYGENERATED "$ff" || continue
+		echo "Regenerate $ff"
+		mv "$ff" "/etc/init.d/${bn}.dpkg-backup"
+		if manage-iocs install "${bn#softioc-}"
+		then
+			# Success
+			rm "/etc/init.d/${bn}.dpkg-backup"
+		else
+			# failed, restore
+			mv "/etc/init.d/${bn}.dpkg-backup" "$ff"
+		fi
+	done
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
