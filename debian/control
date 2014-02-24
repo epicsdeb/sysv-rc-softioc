@@ -4,7 +4,9 @@ Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
 Build-Depends: debhelper (>= 7), perl
 Standards-Version: 3.8.0
-Homepage: http://pubweb.bnl.gov/users/mdavidsaver/www
+Homepage: https://github.com/epicsdeb/sysv-rc-softioc
+Vcs-Browser: https://github.com/epicsdeb/sysv-rc-softioc
+Vcs-Git: https://github.com/epicsdeb/sysv-rc-softioc
 
 Package: sysv-rc-softioc
 Architecture: all
