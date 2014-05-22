@@ -130,7 +130,7 @@ export PROCPORT="$PORT"
 # also USER
 
 PID=/var/run/softioc-$IOC.pid
-LOGFILE=/var/log/softioc-${IOC}.log
+LOGDIR=/var/log/softioc/${IOC}
 
 check_status() {
   if [ "$1" = "-q" ];then
@@ -150,7 +150,7 @@ check_user() {
 PROCARGS="-q -c $CHDIR -i ^D^C^] -p $PID -n $IOC --restrict"
 
 if [ -n "$LOG" -a "$LOG" != 0 ]; then
-	PROCARGS="$PROCARGS --logfile=$LOGFILE"
+	PROCARGS="$PROCARGS --logfile=$LOGDIR/$IOC.log"
 fi
 
 case "$1" in
@@ -165,11 +165,9 @@ start)
 	touch $PID || die "Failed to create pid file"
 	chown "$USER" $PID || die "Failed to chmod pid file"
 
-	# same for log file
-	if [ -n "$LOG" -a "$LOG" != 0 ]; then
-		touch $LOGFILE || die "Failed to create log file"
-		chown "$USER" $LOGFILE || die "Failed to chmod log file"
-	fi
+	# create log directory if necessary
+	[ -d "$LOGDIR" ] || install -d -m755 -o "$USER" "$LOGDIR" \
+	|| echo "Warning: Failed to create directory: $LOGDIR"
 
 	start-stop-daemon --start --pidfile $PID \
 	--chdir "$CHDIR" --startas $PROCSERV --name procServ \
