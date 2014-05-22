@@ -1,0 +1,6 @@
+library.sh      /usr/share/sysv-rc-softioc
+softioc         /usr/share/sysv-rc-softioc
+epics-softioc   /etc/default
+manage-iocs     /usr/bin
+update-iocs-cf  /usr/sbin
+iocs-auto-start /usr/sbin

@@ -1,8 +1,8 @@
 Source: sysv-rc-softioc
-Section: devel
+Section: admin
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
-Build-Depends: debhelper (>= 7), perl
+Build-Depends: debhelper (>= 7.0.50~), perl
 Standards-Version: 3.8.0
 Homepage: https://github.com/epicsdeb/sysv-rc-softioc
 Vcs-Browser: https://github.com/epicsdeb/sysv-rc-softioc
@@ -12,7 +12,7 @@ Package: sysv-rc-softioc
 Architecture: all
 Depends: procserv, ${shlibs:Depends}, ${misc:Depends}
 Recommends: conserver-server, epics-dev
-Description: A SysV style init script for softiocs
+Description: SysV style init script for softiocs
  This init script provides a way to automatically start
  softIocs on system boot.  After system boot they
  can be controled with the procServ process server.

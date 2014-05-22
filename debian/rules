@@ -11,78 +11,22 @@
 # build-arch and build-indep targets  by Bill Allombert 2001
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
+%:
+	dh $@
 
+binary: binary-arch binary-indep
+binary-arch binary-indep: install
+install: build
 
-#Architecture
-build: build-indep
-
-build-indep: build-indep-stamp
-build-indep-stamp:
-
+override_dh_auto_build:
 	for ff in manage-iocs update-iocs-cf iocs-auto-start ; do \
 		pod2man --center=' ' --section=1 $$ff.pod > $$ff.1; done
 
-	touch $@
-
-clean: 
-	dh_testdir
-	dh_testroot
-	rm -f build-indep-stamp
-
+override_dh_auto_clean:
 	rm -f iocs-auto-start.1 manage-iocs.1 update-iocs-cf.1
-
-	dh_clean 
 
 basedir=$(CURDIR)/debian/sysv-rc-softioc
 
-install: install-indep
-install-indep: build-indep
-	dh_testdir
-	dh_testroot
-	dh_clean -k -i 
-	dh_installdirs -i
-
-	install -m 644 library.sh $(basedir)/usr/share/sysv-rc-softioc
-	install -m 644 softioc $(basedir)/usr/share/sysv-rc-softioc
-
-	install -m 644 epics-softioc $(basedir)/etc/default
-
-	install -m 755 manage-iocs $(basedir)/usr/bin
-	install -m 755 update-iocs-cf $(basedir)/usr/sbin
-	install -m 755 iocs-auto-start $(basedir)/usr/sbin
-
-	dh_install -i
-
-# Must not depend on anything. This is to be called by
-# binary-arch/binary-indep
-# in another 'make' thread.
-binary-common:
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs 
-	dh_installdocs
-#	dh_installexamples
-	dh_installman
-	dh_link
-#	dh_strip
-	dh_compress
-	dh_fixperms
-#	dh_perl
-#	dh_makeshlibs
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-# Build architecture independant packages using the common target.
-binary-indep: build-indep install-indep
-	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
-
-binary-arch:
-
-binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-indep
+override_dh_auto_install:

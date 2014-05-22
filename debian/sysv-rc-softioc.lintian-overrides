@@ -1,4 +1,5 @@
-sysv-rc-softioc: script-in-etc-init.d-not-registered-via-update-rc.d /etc/init.d/softioc
+sysv-rc-softioc: script-in-etc-init.d-not-registered-via-update-rc.d etc/init.d/softioc
+sysv-rc-softioc: init.d-script-missing-lsb-section etc/init.d/softioc
 # This script is not designed to be executed directly.
 # but rather to be symlinked with another name (ie softioc-somename) where
 # "somename" is used to locate the IOCs configuration
