@@ -1,3 +1,11 @@
+sysv-rc-softioc (1.15) unstable; urgency=low
+
+  * Move logs to /var/log/softioc/<iocname>/<iocname>.log
+  * Provide logrotate configuration
+    Requires procServ >= 2.6.0
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Thu, 22 May 2014 18:01:42 -0400
+
 sysv-rc-softioc (1.14) unstable; urgency=low
 
   * Update init deps to perfer start before common network auth services

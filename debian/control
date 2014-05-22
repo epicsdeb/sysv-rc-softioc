@@ -10,7 +10,7 @@ Vcs-Git: https://github.com/epicsdeb/sysv-rc-softioc
 
 Package: sysv-rc-softioc
 Architecture: all
-Depends: procserv, ${shlibs:Depends}, ${misc:Depends}
+Depends: procserv (>= 2.6.0~), ${shlibs:Depends}, ${misc:Depends}
 Recommends: conserver-server, epics-dev
 Description: SysV style init script for softiocs
  This init script provides a way to automatically start
