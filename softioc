@@ -153,6 +153,10 @@ if [ -n "$LOG" -a "$LOG" != 0 ]; then
 	PROCARGS="$PROCARGS --logfile=$LOGDIR/$IOC.log"
 fi
 
+if [ -n $CORESIZE ]; then
+	PROCARGS="$PROCARGS --coresize=$CORESIZE"
+fi
+
 case "$1" in
 
 start)

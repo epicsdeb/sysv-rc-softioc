@@ -41,3 +41,11 @@ PORT=4050
 #   (the directory containing this file)
 #
 #CHDIR="$CHDIR"
+
+# Write a core file if process crashes and the size
+# of the corefile is not more than the value given
+# in bytes.
+#
+# By default no core files are generated.
+#
+#CORESIZE=10000000
