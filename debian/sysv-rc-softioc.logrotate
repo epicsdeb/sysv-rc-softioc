@@ -1,7 +1,6 @@
 /var/log/softioc/*/*.log {
     rotate 14
     delaycompress
-    daily
     missingok
     notifempty
     size 10000000
