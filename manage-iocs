@@ -68,7 +68,7 @@ reportone() {
 		# skip IOC which don't specify a host
 		[ -n "$HOST" -a -n "$PORT" ] || continue
 		# identify if this is the host system
-		[ "$HOST" = "$(hostname -s)" -o "$HOST" = "$(hostname -f)" ] && HOST=localhost
+		[ "$HOST" = "$(hostname -s)" -o "$HOST" = "$(hostname -f)" ] && HOST=localhost || continue
 		echo "console $IOC {include softioc; master $HOST; port $PORT;}"
 		;;
 	all)
