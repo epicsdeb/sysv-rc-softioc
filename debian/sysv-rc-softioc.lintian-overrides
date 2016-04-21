@@ -3,3 +3,8 @@ sysv-rc-softioc: init.d-script-missing-lsb-section etc/init.d/softioc
 # This script is not designed to be executed directly.
 # but rather to be symlinked with another name (ie softioc-somename) where
 # "somename" is used to locate the IOCs configuration
+sysv-rc-softioc: init-script-is-not-a-file etc/init.d/softioc
+# This is a new tag checking on Debian Jessie (systemd) compared to 
+# Debian Wheeze and is complained as long as the init script is not
+# a regular file.
+
