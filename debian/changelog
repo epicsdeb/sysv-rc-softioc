@@ -1,3 +1,20 @@
+sysv-rc-softioc (1.16) unstable; urgency=medium
+
+  [ Martin Konrad ]
+  * Add support for writing core files of IOCs
+
+  [ Anton Derbenev ]
+  * Removed excessive logrotate option
+  * localhost-only reports for conserver
+
+  [ Michael Davidsaver ]
+  * add #! to generated init scripts
+
+  [ Wang, Lin ]
+  * Add "init-script-is-not-a-file" to lintian ignore
+
+ -- Michael Davidsaver <mdavidsaver@gmail.com>  Fri, 10 Jun 2016 17:29:42 -0400
+
 sysv-rc-softioc (1.15) unstable; urgency=low
 
   * Move logs to /var/log/softioc/<iocname>/<iocname>.log
