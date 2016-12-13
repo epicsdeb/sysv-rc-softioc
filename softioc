@@ -167,7 +167,10 @@ start)
 	# Needed so that the pid file can be written by $USER
 	# procServ will put in the correct pid
 	touch $PID || die "Failed to create pid file"
-	chown "$USER" $PID || die "Failed to chmod pid file"
+	chown "$USER" $PID || die "Failed to chown pid file"
+	# Ensure PID is readable so 'manage-iocs status' works for anyone
+	# regardless of the active umask when an ioc is restarted.
+	chmod a+r $PID || die "Failed to chmod pid file"
 
 	# create log directory if necessary
 	[ -d "$LOGDIR" ] || install -d -m755 -o "$USER" "$LOGDIR" \
